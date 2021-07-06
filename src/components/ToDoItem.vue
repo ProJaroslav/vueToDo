@@ -1,6 +1,6 @@
 <template>
     <div class="">
-        <span :class="isChecked ? `line-through` : ``">{{ item.text }}</span>
+        <span :class="decoration">{{ item.name }}</span>
         <button @click="deleteSelf">DELETE</button>
         <button @click="check">CHECK</button>
     </div>
@@ -16,17 +16,20 @@ export default {
         },
     },
     data() {
-        return {
-            isChecked: false,
-        };
+        return {};
     },
     methods: {
         check() {
-            this.isChecked = !this.isChecked;
+            this.$emit("checkItem", this.item.id);
         },
 
         deleteSelf() {
             this.$emit("deleteItem", this.item.id);
+        },
+    },
+    computed: {
+        decoration() {
+            return this.item.isDone ? `line-through` : ``;
         },
     },
 };

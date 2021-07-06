@@ -2,7 +2,11 @@
     <div class="">
         <ul>
             <li v-for="(item, index) in toDos" :key="index">
-                <ToDoItem :item="item" @deleteItem="deleteItem" />
+                <ToDoItem
+                    :item="item"
+                    @deleteItem="deleteItem"
+                    @checkItem="checkItem"
+                />
             </li>
         </ul>
         <button @click="increment">CLICK</button>
@@ -21,16 +25,7 @@ export default {
 
     data() {
         return {
-            toDos: [
-                {
-                    id: "1",
-                    text: "todo",
-                },
-                {
-                    id: "2",
-                    text: "todo2",
-                },
-            ],
+            toDos: [],
         };
     },
 
@@ -39,7 +34,7 @@ export default {
             this.toDos.push("1");
         },
 
-        deleteItem(id) {
+        getIndexInTodos(id) {
             let index = -1;
             for (let i = 0; i < this.toDos.length; i++) {
                 if (this.toDos[i].id === id) {
@@ -47,8 +42,26 @@ export default {
                     break;
                 }
             }
+            return index;
+        },
+
+        deleteItem(id) {
+            const index = this.getIndexInTodos(id);
             this.toDos.splice(index, 1);
         },
+        checkItem(id) {
+            const index = this.getIndexInTodos(id);
+            this.toDos[index].isDone = !this.toDos[index].isDone;
+        },
+    },
+    async mounted() {
+        const response = await fetch(
+            "https://api.fake.rest/189bf93b-4d78-4f00-86ac-76d87cfccbd1/task/list?fbclid=IwAR3reR0zbxAXhh_joXROTwrHCr7BKuXOj5eis2g98RHqksmL8rgQJMcYSTQ"
+        );
+        const json = await response.json();
+        for (const item of json.data) {
+            this.toDos.push(item);
+        }
     },
 };
 </script>
